@@ -10,7 +10,8 @@ const haushaltsBuch = {
     neuerEintrag.set("titel", prompt("Titel:"));
     neuerEintrag.set("typ", prompt("Typ (Einahmen und Ausgaben:)"));
     neuerEintrag.set("betrag", parseInt(prompt("Betrag (in Cent:)")));
-    neuerEintrag.set("datum", prompt("Datum (JJJJ-MM-TT:)"));
+    neuerEintrag.set("datum", new Date(prompt("Datum (JJJJ-MM-TT:)") + "00:00:00"));
+    neuerEintrag.set("timespamp", Date.now());
     this.eintraege.push(neuerEintrag);
   },
 
@@ -33,7 +34,11 @@ const haushaltsBuch = {
         `Title:${eintrag.get("titel")}\n` +
           `Typ: ${eintrag.get("typ")}\n` +
           `Betrag: ${eintrag.get("betrag")} ct\n` +
-          `Datum: ${eintrag.get("datum")}`
+          `Datum: ${eintrag.get("datum").toLocaleDateString("de-DE", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })}\n`
       );
     });
   },
