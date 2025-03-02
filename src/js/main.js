@@ -2,17 +2,96 @@
 
 const haushaltsBuch = {
   gesamtBilanz: new Map(),
-
   eintraege: [],
+  fehler : [],
+
 
   eintrag_erfassen() {
     let neuerEintrag = new Map();
-    neuerEintrag.set("titel", prompt("Titel:"));
-    neuerEintrag.set("typ", prompt("Typ (Einahmen und Ausgaben:)"));
-    neuerEintrag.set("betrag", parseInt(prompt("Betrag (in Cent:)")));
-    neuerEintrag.set("datum", new Date(prompt("Datum (JJJJ-MM-TT:)") + "00:00:00"));
+    neuerEintrag.set("titel",this.titelVerarbeiten(prompt("Titel:").trim()));
+    neuerEintrag.set("typ",this.typVerarbeiten (prompt("Typ (Einahmen und Ausgaben:)").trim()));
+    neuerEintrag.set("betrag",this.betragVerarbeiten(prompt("Betrag (in Euro, ohne €-Zeichen:)")));
+    neuerEintrag.set("datum",this.datumVerarbeiten(prompt("Datum (JJJJ-MM-TT:)")));
     neuerEintrag.set("timespamp", Date.now());
+    
+
+    if (this.fehler.length === 0) {
     this.eintraege.push(neuerEintrag);
+       }else {
+    console.log("Folgenden Fehler wurden gefunden:");
+    this.fehler.forEach(function(fehler) {
+      console.log(fehler);
+    });
+   }
+   },
+
+  titelVerarbeiten(titel) {
+    titel = titel.trim();
+    if (this.titelValidieren(titel)) {
+      return titel;
+    } else {
+      this.fehler.push("Kein Titel angegeben.");
+    }
+  },
+
+  titelValidieren(titel) {
+    if(titel !== "") {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  typVerarbeiten(typ) {
+    typ = typ.trim().toLowerCase();
+    if (this.typValidieren(typ)) {
+      return typ;
+    } else {
+      this.fehler.push(`Ungültiger Eintrags-Typ: "${typ}".`);
+    }
+  },
+
+  typValidieren(typ) {
+    if(typ.match(/^(?:einnahmen|ausgabe)$/) !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  betragVerarbeiten(betrag) {
+    betrag = betrag.trim();
+    if (this.betragValidieren(betrag)) {
+      return parseFloat(betrag.replace(",", ".")) * 100;
+    } else {
+      this.fehler.push(`Ungültiger Betrag: ${betrag} €`);
+     
+    }
+  },
+
+  betragValidieren(betrag) {
+    if(betrag.match(/^\d{4}-\d{2}-\d{2}$/) !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  datumVerarbeiten(datum) {
+    datum = datum.trim();
+    if (this.datumValidieren(datum)) {
+      return new Date(`${datum} 00:00:00`);
+    } else {
+      this.fehler.push(`Ungültiger Datumsformat: "${datum}".`);
+    }
+  },
+
+  datumValidieren(datum) {
+    if(datum.match(/ / )!== null) {
+      return true;
+    } else {
+      return false;
+    }
   },
 
   eintraege_sortieren() {
@@ -33,7 +112,7 @@ const haushaltsBuch = {
       console.log(
         `Title:${eintrag.get("titel")}\n` +
           `Typ: ${eintrag.get("typ")}\n` +
-          `Betrag: ${eintrag.get("betrag")} ct\n` +
+          `Betrag: ${(eintrag.get("betrag") / 100).toFixed(2)} €\n` +
           `Datum: ${eintrag.get("datum").toLocaleDateString("de-DE", {
             year: "numeric",
             month: "2-digit",
@@ -51,15 +130,27 @@ const haushaltsBuch = {
 
     this.eintraege.forEach(function (eintrag) {
       switch (eintrag.get("typ")) {
-        case "Einahme":
-          neue_gesamtBilanz.set("einnahmen", neue_gesamtBilanz.get("einnahmen") + eintrag.get("betrag"));
-          neue_gesamtBilanz.set("bilanz", neue_gesamtBilanz.get("bilanz") + eintrag.get("betrag"));
+        case "einahme":
+          neue_gesamtBilanz.set(
+            "einnahmen",
+            neue_gesamtBilanz.get("einnahmen") + eintrag.get("betrag")
+          );
+          neue_gesamtBilanz.set(
+            "bilanz",
+            neue_gesamtBilanz.get("bilanz") + eintrag.get("betrag")
+          );
           break;
-        case "Ausgabe":
-          neue_gesamtBilanz.set("ausgaben", neue_gesamtBilanz.get("ausgaben") + eintrag.get("betrag"));
-          neue_gesamtBilanz.set("bilanz", neue_gesamtBilanz.get("bilanz") - eintrag.get("betrag"));
+        case "ausgabe":
+          neue_gesamtBilanz.set(
+            "ausgaben",
+            neue_gesamtBilanz.get("ausgaben") + eintrag.get("betrag")
+          );
+          neue_gesamtBilanz.set(
+            "bilanz",
+            neue_gesamtBilanz.get("bilanz") - eintrag.get("betrag")
+          );
           break;
-        default:          
+        default:
           console.log(`der Typ "${eintrag.get("typ")}" ist nicht bekannt`);
           break;
       }
@@ -70,9 +161,9 @@ const haushaltsBuch = {
   gesamtbilanz_ausgeben() {
     console.log(
       `Einahmen:${this.gesamtBilanz.get("einnahmen")}ct\n` +
-        `Ausgaben:${this.gesamtBilanz.get("ausgaben")}ct\n` +
-        `Bilanz:${this.gesamtBilanz.get("bilanz")}ct\n` +
-        `Bilanz ist positiv:${this.gesamtBilanz.get("bilanz") >= 0}`
+        `Ausgaben:${(this.gesamtBilanz.get("ausgaben") / 100).toFixed(2)} €\n` +
+        `Bilanz:${(this.gesamtBilanz.get("bilanz") / 100).toFixed(2)} €\n` +
+        `Bilanz ist positiv:${this.gesamtBilanz.get("bilanz") / 100 >= 0}`
     );
   },
 
@@ -80,10 +171,14 @@ const haushaltsBuch = {
     let weiterer_eintrag = true;
     while (weiterer_eintrag) {
       this.eintrag_erfassen();
+      if(this.fehler.length ===0){
       this.eintraege_sortieren();
       this.eintraege_ausgeben();
       this.gesamtbilanz_erstellen();
       this.gesamtbilanz_ausgeben();
+    } else {
+      this.fehler =[];  // Fehler löschen
+    }
       weiterer_eintrag = confirm("Weiteren Eintrag hinzufügen?");
     }
   },
