@@ -8,10 +8,14 @@ const haushaltsBuch = {
 
   eintrag_erfassen() {
     let neuerEintrag = new Map();
-    neuerEintrag.set("titel",this.titelVerarbeiten(prompt("Titel:").trim()));
-    neuerEintrag.set("typ",this.typVerarbeiten (prompt("Typ (Einahmen und Ausgaben:)").trim()));
-    neuerEintrag.set("betrag",this.betragVerarbeiten(prompt("Betrag (in Euro, ohne €-Zeichen:)")));
-    neuerEintrag.set("datum",this.datumVerarbeiten(prompt("Datum (JJJJ-MM-TT:)")));
+    const titelInput = prompt("Titel:");
+    neuerEintrag.set("titel", this.titelVerarbeiten(titelInput ? titelInput.trim() : ""));
+    const typInput = prompt("Typ (Einahmen und Ausgaben:)");
+    neuerEintrag.set("typ", this.typVerarbeiten(typInput ? typInput.trim() : ""));
+    const betragInput = prompt("Betrag (in Euro, ohne €-Zeichen:)");
+    neuerEintrag.set("betrag", this.betragVerarbeiten(betragInput ? betragInput.trim() : ""));
+    const datumInput = prompt("Datum (JJJJ-MM-TT:)");
+    neuerEintrag.set("datum", this.datumVerarbeiten(datumInput ? datumInput.trim() : ""));
     neuerEintrag.set("timespamp", Date.now());
     
 
@@ -124,13 +128,13 @@ const haushaltsBuch = {
   // },
 
 //   <ul>
-//   <li class="ausgabe">
+//   <li class="ausgabe" data-timestamp="2020-02-03T00:00:00.000Z">
 //       <span class="datum">03.02.2020</span>
 //       <span class="titel">Miete</span>
 //       <span class="betrag">545,00 €</span>
 //       <button class="entfernen-button"><i class="fas fa-trash"></i></button>
 //   </li>
-//   <li class="einnahme">
+//   <li class="einnahme" data-timestamp="2020-02-03T00:00:00.000Z">
 //       <span class="datum">01.02.2020</span>
 //       <span class="titel">Gehalt</span>
 //       <span class="betrag">2064,37 €</span>
@@ -138,7 +142,62 @@ const haushaltsBuch = {
 //   </li>
 // </ul>
 
-  //HTML eintrag generieren(eintrag)
+  html_eintrag_generieren(eintrag){
+    //li erstellen
+   let listenpunkt = document.createElement("li");
+   //Klasse setzen
+   if (eintrag.get("typ") === "einnahme") {
+     listenpunkt.setAttribute("class", "einnahme");
+   }else if (eintrag.get("typ") === "ausgabe") {
+     listenpunkt.setAttribute("class", "ausgabe");
+   }
+   listenpunkt.setAttribute("data-timestamp", eintrag.get("timestamp")); //Datum erstellen
+   //span für Datum erstellen
+   let datum = document.createElement("span");
+    //Klasse fürs Datum  setzen
+   datum.setAttribute("class", "datum");
+   // eintragstyp setzen
+   datum.textContent = eintrag.get("datum").toLocaleDateString("de-DE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+   });
+    //Datum in den li einsetzen
+   listenpunkt.insertAdjacentElement("afterbegin", datum);
+
+    //span für Titel erstellen
+    let titel = document.createElement("span");
+    //klasse setzen
+    titel.setAttribute("class", "titel");
+    //Textcontent setzen
+    titel.textContent = eintrag.get("titel");
+    //Titel span einsetzen
+    datum.insertAdjacentElement("afterend", titel);
+
+    //span für Betrag erstellen
+    let betrag = document.createElement("span");
+    //klasse setzen
+    betrag.setAttribute("class", "betrag");
+    //Textcontent setzen
+    betrag.textContent = ` ${(eintrag.get("betrag") / 100).toFixed(2).replace(/\./, ",")} €`;
+    //Betrag einsetzen
+    titel.insertAdjacentElement("afterend", betrag);
+
+    // Button erstellen
+    let button = document.createElement("button");
+    //klasse für button setzen
+    button.setAttribute("class", "entfernen-button");
+    //Textcontent für button setzen
+    betrag.insertAdjacentElement("afterend", button);
+
+    //Icon erstellen
+    let icon = document.createElement("i");
+    //klasse für icon setzen
+    icon.setAttribute("class", "fas fa-trash");
+    //Icon einsetzen
+    button.insertAdjacentElement("afterbegin", icon);
+   return listenpunkt;
+  },
 
   eintraege_anzeigen(){
     //überprüfen ob eine ul vorhanden ist, ggf. ul entfernen
@@ -215,7 +274,7 @@ const haushaltsBuch = {
       this.eintraege_sortieren();
       this.eintraege_anzeigen();
       this.gesamtbilanz_erstellen();
-      this.gesamtbilanz_ausgeben();
+      // this.gesamtbilanz_ausgeben();
     } else {
       this.fehler =[];  // Fehler löschen
     }
