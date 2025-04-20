@@ -3,31 +3,41 @@
 const haushaltsBuch = {
   gesamtBilanz: new Map(),
   eintraege: [],
-  fehler : [],
-
+  fehler: [],
 
   eintrag_erfassen() {
     let neuerEintrag = new Map();
     const titelInput = prompt("Titel:");
-    neuerEintrag.set("titel", this.titelVerarbeiten(titelInput ? titelInput.trim() : ""));
+    neuerEintrag.set(
+      "titel",
+      this.titelVerarbeiten(titelInput ? titelInput.trim() : "")
+    );
     const typInput = prompt("Typ (Einahmen und Ausgaben:)");
-    neuerEintrag.set("typ", this.typVerarbeiten(typInput ? typInput.trim() : ""));
+    neuerEintrag.set(
+      "typ",
+      this.typVerarbeiten(typInput ? typInput.trim() : "")
+    );
     const betragInput = prompt("Betrag (in Euro, ohne €-Zeichen:)");
-    neuerEintrag.set("betrag", this.betragVerarbeiten(betragInput ? betragInput.trim() : ""));
+    neuerEintrag.set(
+      "betrag",
+      this.betragVerarbeiten(betragInput ? betragInput.trim() : "")
+    );
     const datumInput = prompt("Datum (JJJJ-MM-TT:)");
-    neuerEintrag.set("datum", this.datumVerarbeiten(datumInput ? datumInput.trim() : ""));
+    neuerEintrag.set(
+      "datum",
+      this.datumVerarbeiten(datumInput ? datumInput.trim() : "")
+    );
     neuerEintrag.set("timespamp", Date.now());
-    
 
     if (this.fehler.length === 0) {
-    this.eintraege.push(neuerEintrag);
-       }else {
-    console.log("Folgenden Fehler wurden gefunden:");
-    this.fehler.forEach(function(fehler) {
-      console.log(fehler);
-    });
-   }
-   },
+      this.eintraege.push(neuerEintrag);
+    } else {
+      console.log("Folgenden Fehler wurden gefunden:");
+      this.fehler.forEach(function (fehler) {
+        console.log(fehler);
+      });
+    }
+  },
 
   titelVerarbeiten(titel) {
     titel = titel.trim();
@@ -39,7 +49,7 @@ const haushaltsBuch = {
   },
 
   titelValidieren(titel) {
-    if(titel !== "") {
+    if (titel !== "") {
       return true;
     } else {
       return false;
@@ -56,7 +66,7 @@ const haushaltsBuch = {
   },
 
   typValidieren(typ) {
-    if(typ.match(/^(?:einnahmen|ausgabe)$/) !== null) {
+    if (typ.match(/^(?:einnahmen|ausgabe)$/) !== null) {
       return true;
     } else {
       return false;
@@ -69,12 +79,11 @@ const haushaltsBuch = {
       return parseFloat(betrag.replace(",", ".")) * 100;
     } else {
       this.fehler.push(`Ungültiger Betrag: ${betrag} €`);
-     
     }
   },
 
   betragValidieren(betrag) {
-    if(betrag.match(/^\d{4}-\d{2}-\d{2}$/) !== null) {
+    if (betrag.match(/^\d{4}-\d{2}-\d{2}$/) !== null) {
       return true;
     } else {
       return false;
@@ -91,7 +100,7 @@ const haushaltsBuch = {
   },
 
   datumValidieren(datum) {
-    if(datum.match(/ / )!== null) {
+    if (datum.match(/ /) !== null) {
       return true;
     } else {
       return false;
@@ -110,60 +119,28 @@ const haushaltsBuch = {
     });
   },
 
-  //wird durch Html-Ausgabe ersetzt
-  // eintraege_ausgeben() {
-  //   console.clear();
-  //   this.eintraege.forEach(function (eintrag) {
-  //     console.log(
-  //       `Title:${eintrag.get("titel")}\n` +
-  //         `Typ: ${eintrag.get("typ")}\n` +
-  //         `Betrag: ${(eintrag.get("betrag") / 100).toFixed(2)} €\n` +
-  //         `Datum: ${eintrag.get("datum").toLocaleDateString("de-DE", {
-  //           year: "numeric",
-  //           month: "2-digit",
-  //           day: "2-digit",
-  //         })}\n`
-  //     );
-  //   });
-  // },
-
-//   <ul>
-//   <li class="ausgabe" data-timestamp="2020-02-03T00:00:00.000Z">
-//       <span class="datum">03.02.2020</span>
-//       <span class="titel">Miete</span>
-//       <span class="betrag">545,00 €</span>
-//       <button class="entfernen-button"><i class="fas fa-trash"></i></button>
-//   </li>
-//   <li class="einnahme" data-timestamp="2020-02-03T00:00:00.000Z">
-//       <span class="datum">01.02.2020</span>
-//       <span class="titel">Gehalt</span>
-//       <span class="betrag">2064,37 €</span>
-//       <button class="entfernen-button"><i class="fas fa-trash"></i></button>
-//   </li>
-// </ul>
-
-  html_eintrag_generieren(eintrag){
+  html_eintrag_generieren(eintrag) {
     //li erstellen
-   let listenpunkt = document.createElement("li");
-   //Klasse setzen
-   if (eintrag.get("typ") === "einnahme") {
-     listenpunkt.setAttribute("class", "einnahme");
-   }else if (eintrag.get("typ") === "ausgabe") {
-     listenpunkt.setAttribute("class", "ausgabe");
-   }
-   listenpunkt.setAttribute("data-timestamp", eintrag.get("timestamp")); //Datum erstellen
-   //span für Datum erstellen
-   let datum = document.createElement("span");
+    let listenpunkt = document.createElement("li");
+    //Klasse setzen
+    if (eintrag.get("typ") === "einnahme") {
+      listenpunkt.setAttribute("class", "einnahme");
+    } else if (eintrag.get("typ") === "ausgabe") {
+      listenpunkt.setAttribute("class", "ausgabe");
+    }
+    listenpunkt.setAttribute("data-timestamp", eintrag.get("timestamp")); //Datum erstellen
+    //span für Datum erstellen
+    let datum = document.createElement("span");
     //Klasse fürs Datum  setzen
-   datum.setAttribute("class", "datum");
-   // eintragstyp setzen
-   datum.textContent = eintrag.get("datum").toLocaleDateString("de-DE", {
+    datum.setAttribute("class", "datum");
+    // eintragstyp setzen
+    datum.textContent = eintrag.get("datum").toLocaleDateString("de-DE", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-   });
+    });
     //Datum in den li einsetzen
-   listenpunkt.insertAdjacentElement("afterbegin", datum);
+    listenpunkt.insertAdjacentElement("afterbegin", datum);
 
     //span für Titel erstellen
     let titel = document.createElement("span");
@@ -179,7 +156,7 @@ const haushaltsBuch = {
     //klasse setzen
     betrag.setAttribute("class", "betrag");
     //Textcontent setzen
-    betrag.textContent = ` ${(eintrag.get("betrag") / 100).toFixed(2).replace(/\./, ",")} €`;
+    betrag.textContent = `${(eintrag.get("betrag") / 100).toFixed(2).replace(/\./, ",")} €`;
     //Betrag einsetzen
     titel.insertAdjacentElement("afterend", betrag);
 
@@ -196,23 +173,30 @@ const haushaltsBuch = {
     icon.setAttribute("class", "fas fa-trash");
     //Icon einsetzen
     button.insertAdjacentElement("afterbegin", icon);
-   return listenpunkt;
+    return listenpunkt;
   },
 
-  eintraege_anzeigen(){
+  eintraege_anzeigen() {
     //überprüfen ob eine ul vorhanden ist, ggf. ul entfernen
-      document.querySelectorAll("monaltsliste ul").forEach(function (eintragsliste) {
+    document
+      .querySelectorAll("monaltsliste ul")
+      .forEach(function (eintragsliste) {
         eintragsliste.remove();
       });
-     //<ul> erstellen 
-     let eintragsliste = document.createElement("ul");
-     //über eintraege[]iterierern
-     for(let eintrag of this.eintraege){
-         // für jeden Eintrag einen HTML-Eintrag erstellen,HTML Eintrag in die <ul> einsetzen
-         eintragsliste.insertAdjacentElement("beforeend", this.html_eintrag_generieren(eintrag));
-       }
-         // <ul>in den article.monatsliste einsetzen
-          document.querySelector(".monatsliste").insertAdjacentElement("afterbegin", eintragsliste);
+    //<ul> erstellen
+    let eintragsliste = document.createElement("ul");
+    //über eintraege[]iterierern
+    for (let eintrag of this.eintraege) {
+      // für jeden Eintrag einen HTML-Eintrag erstellen,HTML Eintrag in die <ul> einsetzen
+      eintragsliste.insertAdjacentElement(
+        "beforeend",
+        this.html_eintrag_generieren(eintrag)
+      );
+    }
+    // <ul>in den article.monatsliste einsetzen
+    document
+      .querySelector(".monatsliste")
+      .insertAdjacentElement("afterbegin", eintragsliste);
   },
 
   gesamtbilanz_erstellen() {
@@ -251,16 +235,6 @@ const haushaltsBuch = {
     this.gesamtBilanz = neue_gesamtBilanz;
   },
 
-  //Wird durch Html-Ausgabe ersetzt
-  // gesamtbilanz_ausgeben() {
-  //   console.log(
-  //     `Einahmen:${this.gesamtBilanz.get("einnahmen")}ct\n` +
-  //       `Ausgaben:${(this.gesamtBilanz.get("ausgaben") / 100).toFixed(2)} €\n` +
-  //       `Bilanz:${(this.gesamtBilanz.get("bilanz") / 100).toFixed(2)} €\n` +
-  //       `Bilanz ist positiv:${this.gesamtBilanz.get("bilanz") / 100 >= 0}`
-  //   );
-  // },
-
   // <aside id="gesamtbilanz">
   //       <h1>Gesamtbilanz</h1>
   //       <div class="gesamtbilanz-zeile einnahmen"><span>Einnahmen:</span><span>4228,74€</span></div>
@@ -268,32 +242,101 @@ const haushaltsBuch = {
   //       <div class="gesamtbilanz-zeile bilanz"><span>Bilanz:</span><span class="positiv">1239,86€</span></div>
   //   </aside>
 
-
   //html gesamtbilanz generieren
-     //anhand der aktuellen gesamzbilanz, die gesamtbilanz neu generieren
+  html_gesamtbilanz_generieren() {
+    //anhand der aktuellen gesamzbilanz, die gesamtbilanz neu generieren
+    let gesamtbilanz = document.createElement("aside");
+    //id setzen
+    gesamtbilanz.setAttribute("id", "gesamtbilanz");
+    //h1 erstellen
+    let h1 = document.createElement("h1");
+    //Textcontent setzen
+    ueberschrift.textContent = "Gesamtbilanz";
+    //h1 in die aside einsetzen
+    gesamtbilanz.insertAdjacentElement("afterbegin", ueberschrift);
 
-  gesamtbilanz_anzeigen(){
-    //prüfen ob bereits Gesamtbilanz angezeigt wird,
-    document.querySelectorAll("#gesamtbilanz").forEach(function (gesamtbilanz) {
-      gesamtbilanz.remove();// ggf. entfernen
-    });
-    // neue gesamtbilanz anzeigen (html_gesamtbilanz-generieren())
-    document.querySelector("body").insertAdjacentElement("beforeend", this.html_gesamtbilanz_generieren());
+    //ERSTER DIV für Einnahmen erstellen
+    let einnahmen_zeile = document.createElement("div");
+    //klasse setzen
+    einnahmen_zeile.setAttribute("class", "gesamtbilanz-zeile einnahmen");
+    //span für Einnahmen erstellen
+    let einnahmen_titel = document.createElement("span");
+    //Textcontent setzen
+    einnahmen_titel.textContent = "Einnahmen:";
+    //span in die div einsetzen
+    einnahmen_zeile.insertAdjacentElement("afterbegin", einnahmen_titel);
+
+    //span für Betrag erstellen
+    let einnahmen_betrag = document.createElement("span");
+    //Textcontent setzen
+    einnahmen_betrag.textContent = `${(this.gesamtbilanz.get("einnahmen")/100).toFixed(2).replace(/\./, ",")} €`;
+    //span in die div einsetzen
+    einnahmen_zeile.insertAdjacentElement("beforend", einnahmen_betrag);
+    //div in die aside einsetzen
+    gesamtbilanz.insertAdjacentElement("beforeend", einnahmen_zeile);
+
+    //ZWEITES DIV für Ausgaben erstellen
+     //div für Einnahmen erstellen
+     let ausgaben_zeile = document.createElement("div");
+     //klasse setzen
+     ausgaben_zeile.setAttribute("class", "gesamtbilanz-zeile ausgaben");
+     //span für Einnahmen erstellen
+     let ausgaben_titel = document.createElement("span");
+     //Textcontent setzen
+     ausgaben_titel.textContent = "Ausgaben:";
+     //span in die div einsetzen
+     ausgaben_zeile.insertAdjacentElement("afterbegin", ausgaben_titel);
+     //span für Betrag erstellen
+     let ausgaben_betrag = document.createElement("span");
+     //Textcontent setzen
+     ausgaben_betrag.textContent = `${(this.gesamtbilanz.get("ausgaben")/100).toFixed(2).replace(/\./, ",")} €`;
+     //span in die div einsetzen
+     ausgaben_zeile.insertAdjacentElement("beforend", ausgaben_betrag);
+     //div in die aside einsetzen
+     gesamtbilanz.insertAdjacentElement("beforeend", ausgaben_zeile);
+    
+     // DRITTES DIV für Bilanz erstellen
+     //div für Bilanz erstellen
+     let bilanz_zeile = document.createElement("div");
+     bilanz_zeile.setAttribute("class", "gesamtbilanz-zeile bilanz");
+     let bilanz_titel = document.createElement("span");
+     bilanz_titel.textContent = "Bilanz:";
+     bilanz_zeile.insertAdjacentElement("afterbegin", bilanz_titel);
+     let bilanz_betrag = document.createElement("span");
+      if(this.gesamtbilanz.get("bilanz") >= 0) {
+        bilanz_betrag.setAttribute("class", "positiv");
+      } else if(this.gesamtbilanz.get("bilanz") < 0) {
+        bilanz_betrag.setAttribute("class", "negativ");
+      }
+     bilanz_betrag.textContent = `${(this.gesamtbilanz.get("bilanz")/100).toFixed(2).replace(/\./, ",")} €`;
+     bilanz_zeile.insertAdjacentElement("beforend", bilanz_betrag);
+     gesamtbilanz.insertAdjacentElement("beforeend", bilanz_zeile);
+     return gesamtbilanz;
   },
 
-  
+  gesamtbilanz_anzeigen() {
+    //prüfen ob bereits Gesamtbilanz angezeigt wird,
+    document.querySelectorAll("#gesamtbilanz").forEach(function (gesamtbilanz) {
+      gesamtbilanz.remove(); // ggf. entfernen
+    });
+    // neue gesamtbilanz anzeigen (html_gesamtbilanz-generieren())
+    document
+      .querySelector("body")
+      .insertAdjacentElement("beforeend", this.html_gesamtbilanz_generieren());
+  },
+
   eintrag_hinzufuegen() {
     let weiterer_eintrag = true;
     while (weiterer_eintrag) {
       this.eintrag_erfassen();
-      if(this.fehler.length ===0){
-      this.eintraege_sortieren();
-      this.eintraege_anzeigen();
-      this.gesamtbilanz_erstellen();
-      this.gesamtbilanz_anzeigen();
-    } else {
-      this.fehler =[];  // Fehler löschen
-    }
+      if (this.fehler.length === 0) {
+        this.eintraege_sortieren();
+        this.eintraege_anzeigen();
+        this.gesamtbilanz_erstellen();
+        this.gesamtbilanz_anzeigen();
+      } else {
+        this.fehler = []; // Fehler löschen
+      }
       weiterer_eintrag = confirm("Weiteren Eintrag hinzufügen?");
     }
   },
