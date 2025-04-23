@@ -1,9 +1,43 @@
 "use strict";
 
 const eingabeformular = {
+   
+    formulardaten_holen(e) {
+      
+        return {
+            titel: e.target.elements.titel.value,
+            betrag:e.target.elements.betrag.value,
+            einahme:e.target.elements.einnahme.checked,
+            ausgabe:e.target.elements.ausgabe.checked,
+            datum: e.target.elements.datum.valueAsDate
+        }
+    },
+
+    formulardaten_verarbeiten(formulardaten){
+        let typ ;
+        if(formulardaten.einnahme === true){
+            typ ="einnahme";
+        }else  if ( formulardaten.ausgabe===true){
+            typ ="ausgabe";   
+        }  
+        return{
+            titel:formulardaten.titel.trim(),
+            typ: typ,
+            betrag: parseFloat(formulardaten.betrag) *100,
+            datum: formulardaten.datum,
+        }
+    },
+
+
+  absenden_event_hinzufügen(eingabeformular) {
+    eingabeformular.querySelector("#eingabeformular").addEventListener("submit", e => {
+    e.preventDefault();
+    let formulardaten = this.formulardaten_verarbeiten(this.formulardaten_holen(e));
+    console.log(formulardaten)
+  });
+  },
 
     html_generieren() {
-
         let eingabeformular = document.createElement("section");
         eingabeformular.setAttribute("id", "eingabeformular-container");
         eingabeformular.innerHTML = `<form id="eingabeformular" action="#" method="get"></form>
@@ -31,6 +65,7 @@ const eingabeformular = {
         <div class="eingabeformular-zeile">
             <button class="standard" type="submit" form="eingabeformular">Hinzufügen</button>
         </div>`;
+        this.absenden_event_hinzufügen(eingabeformular);
         return eingabeformular;
     },
     anzeigen() {
