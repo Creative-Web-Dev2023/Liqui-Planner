@@ -1,43 +1,122 @@
 "use strict";
 
 const eingabeformular = {
-   
+
     formulardaten_holen(e) {
-      
         return {
             titel: e.target.elements.titel.value,
-            betrag:e.target.elements.betrag.value,
-            einahme:e.target.elements.einnahme.checked,
-            ausgabe:e.target.elements.ausgabe.checked,
+            betrag: e.target.elements.betrag.value,
+            einnahme: e.target.elements.einnahme.checked,
+            ausgabe: e.target.elements.ausgabe.checked,
             datum: e.target.elements.datum.valueAsDate
         }
     },
 
-    formulardaten_verarbeiten(formulardaten){
-        let typ ;
-        if(formulardaten.einnahme === true){
-            typ ="einnahme";
-        }else  if ( formulardaten.ausgabe===true){
-            typ ="ausgabe";   
-        }  
-        return{
-            titel:formulardaten.titel.trim(),
+    formulardaten_verarbeiten(formulardaten) {
+        let typ;
+        if (formulardaten.einnahme === true) {
+            typ = "einnahme";
+        } else if (formulardaten.ausgabe === true) {
+            typ = "ausgabe";
+        }
+
+        return {
+            titel: formulardaten.titel.trim(),
             typ: typ,
-            betrag: parseFloat(formulardaten.betrag) *100,
-            datum: formulardaten.datum,
+            betrag: parseFloat(formulardaten.betrag) * 100,
+            datum: formulardaten.datum
         }
     },
 
+    formulardaten_validieren(formulardaten) {
 
-  absenden_event_hinzufügen(eingabeformular) {
-    eingabeformular.querySelector("#eingabeformular").addEventListener("submit", e => {
-    e.preventDefault();
-    let formulardaten = this.formulardaten_verarbeiten(this.formulardaten_holen(e));
-    console.log(formulardaten)
-  });
-  },
+        let fehler = [];
+        if (formulardaten.titel === "") {
+            fehler.push("Titel");
+        }
+        if (formulardaten.typ === undefined || formulardaten.typ.match(/^(?:einnahme|ausgabe)$/) === null) {
+            fehler.push("Typ");
+        }
+        if (isNaN(formulardaten.betrag)) {
+            fehler.push("Betrag");
+        }
+        if (formulardaten.datum === null) {
+            fehler.push("Datum");
+        }
+        return fehler;
+
+    },
+
+    datum_aktualisieren() {
+        let datums_input = document.querySelector("#datum");
+        if (datums_input !== null) {
+            datums_input.valueAsDate = new Date();
+        }
+    },
+
+    absenden_event_hinzufuegen(eingabeformular) {
+        eingabeformular.querySelector("#eingabeformular").addEventListener("submit", e => {
+            e.preventDefault();
+            // Formulardaten holen und Formulardaten verarbeiten
+            let formulardaten = this.formulardaten_verarbeiten(this.formulardaten_holen(e));
+            console.log(formulardaten);
+            // Formulardaten validieren
+            let formular_fehler = this.formulardaten_validieren(formulardaten);
+            console.log(formular_fehler);
+
+            if (formular_fehler.length === 0) {
+                // Eintrag zum Haushaltsbuch hinzufügen
+                haushaltsbuch.eintrag_hinzufuegen(formulardaten);
+                // wenn bereits Fehlermeldung angezeigt wird
+                    // Fehlermeldung entfernen
+                this.fehlerbox_entfernen();
+                // Formular zurücksetzen
+                e.target.reset();
+                // Datum auf den heutigen Tag setzen
+                this.datum_aktualisieren();
+            } else {
+                // wenn bereits Fehlermeldung angezeigt wird
+                    // Fehlermeldung entfernen
+                this.fehlerbox_entfernen();
+                // Fehlermeldung im Eingabeformular-Container anzeigen
+                this.fehlerbox_anzeigen(formular_fehler);
+            }
+                
+        });
+    },
+
+    html_fehlerbox_generieren(formular_fehler) {
+        let fehlerbox = document.createElement("div");
+        fehlerbox.setAttribute("class", "fehlerbox");
+        let fehlertext = document.createElement("span");
+        fehlertext.textContent = "Folgende Felder wurden nicht korrekt ausgefüllt:";
+        fehlerbox.insertAdjacentElement("afterbegin", fehlertext);
+        let fehlerliste = document.createElement("ul");
+        formular_fehler.forEach(fehler => {
+            let fehlerlistenpunkt = document.createElement("li");
+            fehlerlistenpunkt.textContent = fehler;
+            fehlerliste.insertAdjacentElement("beforeend", fehlerlistenpunkt);
+        });
+        fehlerbox.insertAdjacentElement("beforeend", fehlerliste);
+        return fehlerbox;
+    },
+
+    fehlerbox_anzeigen(formular_fehler) {
+        let eingabeformular_container = document.querySelector("#eingabeformular-container");
+        if (eingabeformular_container !== null) {
+            eingabeformular_container.insertAdjacentElement("afterbegin", this.html_fehlerbox_generieren(formular_fehler));
+        }
+    },
+
+    fehlerbox_entfernen() {
+        let bestehende_fehlerbox = document.querySelector(".fehlerbox");
+        if (bestehende_fehlerbox !== null) {
+            bestehende_fehlerbox.remove();
+        }
+    },
 
     html_generieren() {
+
         let eingabeformular = document.createElement("section");
         eingabeformular.setAttribute("id", "eingabeformular-container");
         eingabeformular.innerHTML = `<form id="eingabeformular" action="#" method="get"></form>
@@ -65,11 +144,19 @@ const eingabeformular = {
         <div class="eingabeformular-zeile">
             <button class="standard" type="submit" form="eingabeformular">Hinzufügen</button>
         </div>`;
-        this.absenden_event_hinzufügen(eingabeformular);
+
+        this.absenden_event_hinzufuegen(eingabeformular);
+
         return eingabeformular;
+
     },
+
     anzeigen() {
         document.querySelector("#navigationsleiste").insertAdjacentElement("afterend", this.html_generieren());
+        // Datum auf den heutigen Tag setzen
+        this.datum_aktualisieren();
     }
+
+
 
 };
