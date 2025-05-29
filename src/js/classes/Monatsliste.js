@@ -12,4 +12,16 @@
               </ul>
  </article>*/
 
-class Monatsliste {}
+class Monatsliste {
+
+  constructor(jahr, monat, eintraege) {
+    this._jahr = jahr;
+    this._monat = monat;
+    this._eintraege = [];
+    this._bilanz = 0;
+    this._html = this._html_generieren();
+  }
+  _html_generieren(){
+    
+  }
+}
