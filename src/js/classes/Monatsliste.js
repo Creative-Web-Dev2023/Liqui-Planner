@@ -21,9 +21,10 @@ class Monatsliste {
   html(){
     return this._html;
   }
-  
+
  eintrag_hinzufuegen(eintrag){
    this._eintraege.push(eintrag);
+   this._aktualisieren();
  }
   //  _eintraege_sortieren() {
   //       this._eintraege.sort((eintrag_a, eintrag_b) => {
@@ -61,13 +62,17 @@ class Monatsliste {
      }else {
          monatsbilanz.setAttribute("class", "monatsbilanz negativ");
      }
+      monatsbilanz.textContent = `${this._bilanz } €`;
      ueberschrift.insertAdjacentElement("beforeend", monatsbilanz);
      monatsliste.insertAdjacentElement("afterbegin", ueberschrift);
-
     let eintragsliste = document.createElement("ul");
     this._eintraege.forEach(eintrag => eintragsliste.insertAdjacentElement("beforeend",eintrag.html()));
-   monatsliste.insertAdjacentElement("beforeend", eintragsliste);
+     monatsliste.insertAdjacentElement("beforeend", eintragsliste);
+    return monatsliste;
+  }
 
-  return monatsliste;
+  _aktualisieren() {
+    this._html = this._html_generieren();
+    
   }
 }

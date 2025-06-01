@@ -23,6 +23,7 @@ eintrag_hinzufuegen(eintrag, ){
     if(!monatsliste_vorhanden){
         this. _monatsliste_hinzufuegen(eintragsjahr, eintragsmonat, eintrag);
     }
+    this._aktualisieren();
 }
 
 _monatsliste_hinzufuegen(jahr, monat, eintrag){
@@ -40,15 +41,21 @@ _html_generieren() {
     return monatslisten;
 }
 
+_aktualisieren() {
+    this._html = this._html_generieren();
+    this.anzeigen();
+    }
 
-anzeigen(){
-    let eingabeformular_container = document.querySelector("#eingabeformular-container");
-    let monatslistensammlung = document.querySelector("#monatslisten");
-    if(eingabeformular_container !== null) {
-        if(monatslistensammlung !== null) {
-         monatslistensammlung.remove();
-        }
-        eingabeformular_container.insertAdjacentElement("afterend", this._html);
-    } 
+ anzeigen(){
+        this._html = this._html_generieren();
+        let eingabeformular_container = document.querySelector("#eingabeformular-container");
+        let monatslistensammlung = document.querySelector("#monatslisten");
+        if(eingabeformular_container !== null) {
+            if(monatslistensammlung !== null) {
+                monatslistensammlung.remove();
+            }
+            eingabeformular_container.insertAdjacentElement("afterend", this._html);
+        } 
     }
 }
+
