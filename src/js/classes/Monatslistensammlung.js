@@ -11,32 +11,33 @@ class Monatslistensammlung {
     }
 
 eintrag_hinzufuegen(eintrag, ){
-    //Werte für MOnat und Jahr holen
     let eintragsmonat = eintrag.datum().toLocaleString("de-DE", { month: "numeric" });
     let eintragsjahr = eintrag.datum().toLocaleString("de-DE", { year: "numeric" });
-    // prüfen ob MOnatsliste schon vorhanden ist
+ 
     let monatsliste_vorhanden = false;
     this._monatslisten.forEach(monatsliste => {
         if(eintragsmonat === monatsliste.monat() && eintragsjahr === monatsliste.jahr()){
           monatsliste.eintrag_hinzufuegen(eintrag);
-          monatsliste_vorhanden = true;
-           
+          monatsliste_vorhanden = true;      
         }
     });
     if(!monatsliste_vorhanden){
-        this. _monatsliste_hinzufuegen();
+        this. _monatsliste_hinzufuegen(eintragsjahr, eintragsmonat, eintrag);
     }
-    // wenn ja, dann Eintrag hinzufügen 
-    // wenn nein, dann neue Monatsliste erstellen und Eintrag hinzufügen
 }
 
-_monatsliste_hinzufuegen() {
+_monatsliste_hinzufuegen(jahr, monat, eintrag){
+    let neue_monatsliste = new Monatsliste(jahr, monat);
+    neue_monatsliste.eintrag_hinzufuegen(eintrag);
+    this._monatslisten.push(neue_monatsliste);
+}
 
+_html_generieren() {
+    
 }
 
 
-
-    anzeigen(){
+anzeigen(){
         
     }
 }
