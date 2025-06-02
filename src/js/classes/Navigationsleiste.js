@@ -20,6 +20,8 @@ class Navigationsleiste {
        navigationsleiste.insertAdjacentElement("afterbegin", anker);
        return navigationsleiste;
     }
+
+    
    anzeigen(){
     let body = document.querySelector("body");
     if(body !== null){

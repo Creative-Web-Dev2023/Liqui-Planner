@@ -38,7 +38,6 @@ class Gesamtbilanz{
         let ueberschrift = document.createElement("h1");
         ueberschrift.textContent = "Gesamtbilanz";
         gesamtbilanz.insertAdjacentElement("afterbegin", ueberschrift);
-
         let einnahmen_zeile = document.createElement("div");
         einnahmen_zeile.setAttribute("class", "gesamtbilanz-zeile einnahmen");
         let einnahmen_titel = document.createElement("span");
@@ -48,7 +47,6 @@ class Gesamtbilanz{
         einnahmen_betrag.textContent = `${(this._einnahmen / 100).toFixed(2).replace(/\./, ",")} €`;
         einnahmen_zeile.insertAdjacentElement("beforeend", einnahmen_betrag);
         gesamtbilanz.insertAdjacentElement("beforeend", einnahmen_zeile);
-
         let ausgaben_zeile = document.createElement("div");
         ausgaben_zeile.setAttribute("class", "gesamtbilanz-zeile ausgaben");
         let ausgaben_titel = document.createElement("span");
@@ -58,7 +56,6 @@ class Gesamtbilanz{
         ausgaben_betrag.textContent = `${(this._ausgaben / 100).toFixed(2).replace(/\./, ",")} €`;
         ausgaben_zeile.insertAdjacentElement("beforeend", ausgaben_betrag);
         gesamtbilanz.insertAdjacentElement("beforeend", ausgaben_zeile);
-
         let bilanz_zeile = document.createElement("div");
         bilanz_zeile.setAttribute("class", "gesamtbilanz-zeile bilanz");
         let bilanz_titel = document.createElement("span");
@@ -69,7 +66,6 @@ class Gesamtbilanz{
         bilanz_betrag.textContent = `${(this._bilanz / 100).toFixed(2).replace(/\./, ",")} €`;
         bilanz_zeile.insertAdjacentElement("beforeend", bilanz_betrag);
         gesamtbilanz.insertAdjacentElement("beforeend", bilanz_zeile);
-
         return gesamtbilanz;
     }
 

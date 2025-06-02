@@ -4,8 +4,11 @@ class Haushaltsbuch {
 
     constructor() {
         this._eintraege = [];
+        this.navigationsleiste = new Navigationsleiste();
+        this.eingabeformular = new Eingabeformular();
         this._monatslistensammlung = new Monatslistensammlung();
         this._gesamtbilanz = new Gesamtbilanz();
+        console.log(this);
     }
 
     eintrag_hinzufuegen(formulardaten) {
@@ -33,9 +36,11 @@ class Haushaltsbuch {
         this._gesamtbilanz.aktualisieren(this._eintraege);
        
     }
-    anzeigen(){
-      this._monatslistensammlung.anzeigen();  
-      this._gesamtbilanz.anzeigen();
+   start(){
+    this.navigationsleiste.anzeigen();
+    this.eingabeformular.anzeigen();
+    this._monatslistensammlung.anzeigen();  
+    this._gesamtbilanz.anzeigen();
     }
     
     
