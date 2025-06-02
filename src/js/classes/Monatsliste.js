@@ -27,7 +27,6 @@ class Monatsliste {
    this._aktualisieren();
  }
 
-
    _eintraege_sortieren() {
         this._eintraege.sort((eintrag_a, eintrag_b) => {
             if (eintrag_a.datum() > eintrag_b.datum()) {

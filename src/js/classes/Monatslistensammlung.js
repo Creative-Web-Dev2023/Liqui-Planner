@@ -10,7 +10,7 @@ class Monatslistensammlung {
         this._html = this._html_generieren();
     }
 
-eintrag_hinzufuegen(eintrag, ){
+_eintrag_hinzufuegen(eintrag, ){
     let eintragsmonat = eintrag.datum().toLocaleString("de-DE", { month: "numeric" });
     let eintragsjahr = eintrag.datum().toLocaleString("de-DE", { year: "numeric" });
     let monatsliste_vorhanden = false;
@@ -23,7 +23,6 @@ eintrag_hinzufuegen(eintrag, ){
     if(!monatsliste_vorhanden){
         this. _monatsliste_hinzufuegen(eintragsjahr, eintragsmonat, eintrag);
     }
-    this._aktualisieren();
 }
 
 _monatsliste_hinzufuegen(jahr, monat, eintrag){
@@ -57,7 +56,11 @@ _html_generieren() {
     return monatslisten;
 }
 
-_aktualisieren() {
+aktualisieren(eintraege) {
+    this._monatslisten = [];
+    eintraege.forEach(eintrag => {
+        this._eintrag_hinzufuegen(eintrag);
+    });
     this._monatsliste_sortieren();
     this._html = this._html_generieren();
     this.anzeigen();

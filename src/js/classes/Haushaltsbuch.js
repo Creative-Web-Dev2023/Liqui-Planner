@@ -15,7 +15,7 @@ class Haushaltsbuch {
             formulardaten.typ, 
             formulardaten.datum);
         this._eintraege.push(neuer_eintrag);
-        this._monatslistensammlung.eintrag_hinzufuegen(neuer_eintrag);
+        this._monatslistensammlung.aktualisieren(this._eintraege);
         this._gesamtbilanz.aktualisieren(this._eintraege);
     
     }
@@ -29,6 +29,7 @@ class Haushaltsbuch {
             }
         }
         this._eintraege.splice(start_index, 1);
+        this._monatslistensammlung.aktualisieren(this._eintraege);
         this._gesamtbilanz.aktualisieren(this._eintraege);
        
     }
