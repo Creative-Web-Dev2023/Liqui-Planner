@@ -32,6 +32,22 @@ _monatsliste_hinzufuegen(jahr, monat, eintrag){
     this._monatslisten.push(neue_monatsliste);
 }
 
+_monatsliste_sortieren() {
+ this._monatslisten.sort((monatsliste_a, monatsliste_b) => {
+        if (monatsliste_a.jahr() < monatsliste_b.jahr()) {
+            return 1;
+        } else if (monatsliste_a.jahr() > monatsliste_b.jahr()) {
+            return -1;
+        } else {
+           if (monatsliste_a.monat() < monatsliste_b.monat()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    });
+}
+
 _html_generieren() {
     let monatslisten = document.createElement("section");
     monatslisten.setAttribute("id", "monatslisten");
@@ -42,6 +58,7 @@ _html_generieren() {
 }
 
 _aktualisieren() {
+    this._monatsliste_sortieren();
     this._html = this._html_generieren();
     this.anzeigen();
     }
